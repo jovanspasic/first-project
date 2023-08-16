@@ -5,6 +5,6 @@ class AnimalAgeCalculator {
 
     public:
 
-        virtual int calculateAgeInAnimalYears(Animal &animal) = 0;
+        virtual int calculateAgeInAnimalYears(Animal *animal) = 0;
 
 };

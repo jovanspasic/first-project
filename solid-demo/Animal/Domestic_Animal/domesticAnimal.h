@@ -1,8 +1,12 @@
-#pragma once 
+#pragma once
+#include "..\animal.h"
 
-class DomesticAnimal {
+class DomesticAnimal : public Animal {
 
-    public: 
+    public:
+        DomesticAnimal();
+        DomesticAnimal(int numberOfLegs, int age);
+
         virtual void playWithOwner(void) = 0;
 
 };

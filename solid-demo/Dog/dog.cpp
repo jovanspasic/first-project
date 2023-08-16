@@ -4,7 +4,7 @@ Dog::Dog() {
 
 }
 
-Dog::Dog(string breed, string furColor, int numberOfLegs, int age) : Animal::Animal(numberOfLegs, age) {
+Dog::Dog(string breed, string furColor, int numberOfLegs, int age) : DomesticAnimal(numberOfLegs, age) {
     this->breed = breed;
     this->furColor = furColor;
 }
@@ -26,7 +26,11 @@ void Dog::setFurColor(string furColor) {
 }
 
 void Dog::makeSound() {
-    cout << "Awooo" << endl;
+    cout << "woof woof" << endl;
+}
+
+void Dog::playWithOwner() {
+    cout << "Owner throws a stick\nRun for the stick\nGet the stick for the owner" << endl;
 }
 
 void Dog::chaseTail() {

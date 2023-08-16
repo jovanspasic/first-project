@@ -6,6 +6,6 @@ class DogAgeCalculator : AnimalAgeCalculator {
     public:
         DogAgeCalculator();
         
-        int calculateAgeInAnimalYears(Animal &animal);
+        int calculateAgeInAnimalYears(Animal *animal);
 
 };

@@ -1,7 +1,7 @@
 #pragma once
-#include "..\Animal\animal.h"
+#include "..\Animal\Domestic_Animal\domesticAnimal.h"
 
-class Dog : public Animal{
+class Dog : public DomesticAnimal{
 
     private:
         string breed;
@@ -17,6 +17,7 @@ class Dog : public Animal{
         void setFurColor(string furColor);
 
         void makeSound(void);
+        void playWithOwner(void);
         void chaseTail(void);
 
 };

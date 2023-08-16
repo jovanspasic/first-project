@@ -4,6 +4,6 @@ DogAgeCalculator::DogAgeCalculator() {
 
 }
 
-int DogAgeCalculator::calculateAgeInAnimalYears(Animal &animal) {
-    return animal.getAge() * 7;
+int DogAgeCalculator::calculateAgeInAnimalYears(Animal *animal) {
+    return animal->getAge() * 7;
 }
