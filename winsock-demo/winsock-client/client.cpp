@@ -53,56 +53,55 @@ void Client::connectToTheServer() {
     }
 }
 
-void Client::sendMesageAndReceiveResponse() {
-
+int Client::sendMessage() {
     cout << "Input a message for the server" << endl;
     cin >> userRequest;
+
+    if(userRequest == "none") {
+        return 1;
+    }
+    
     const char *sptr = userRequest.c_str();
-
-    if (send(connectSocket, sptr, strlen(sptr), 0) == SOCKET_ERROR)
-    {
-        cout << "There was an error while trying to send the message to the server" << endl;
+    if(send(connectSocket, sptr, strlen(sptr) + 1, 0) == SOCKET_ERROR) {
+        cout << "A message occured while trying to send a message to the server";
         closesocket(connectSocket);
         WSACleanup();
         exit(1);
     }
-    cout << "The message was sent to the server" << endl;
+    cout << "Message sent successfully" << endl;
+    return 0;
+}
 
-
-    iResult = shutdown(connectSocket, SD_SEND);
-    if (iResult == SOCKET_ERROR)
+void Client::receiveMessage() {
+    iResult = recv(connectSocket, recvBuf, recvBufLen, 0);
+    if (iResult > 0)
     {
-        cout << "An error occured while trying to shut the socket down" << endl;
+        cout << "Data received from the server" << endl;
+        cout << "The message received from the server is " << recvBuf << endl;
+    }
+    else if (iResult == 0)
+    {
+        cout << "Closing connection" << endl;
+    }
+    else
+    {
+        cout << "Receiving failed with an error: " << WSAGetLastError() << endl;
         closesocket(connectSocket);
         WSACleanup();
         exit(1);
     }
+}
 
-    do
-    {
-        iResult = recv(connectSocket, recvBuf, recvBufLen, 0);
-        if (iResult > 0)
-        {
-            cout << "Data received from the server" << endl;
-            cout << "The message received from the server is " << recvBuf << endl;
-        }
-        else if (iResult == 0)
-        {
-            cout << "Closing connection" << endl;
-        }
-        else
-        {
-            cout << "Receiving failed with an error: " << WSAGetLastError() << endl;
-            closesocket(connectSocket);
-            WSACleanup();
-            exit(1);
-        }
-
-    } while (iResult > 0);
-
+void Client::sendMesageAndReceiveResponse() {
+    
+    while(sendMessage() == 0) {
+        receiveMessage();
+    }
+    
 }
 
 void Client::shutdownTheClient() {
+    cout << "The client is shutting down" << endl;
     closesocket(connectSocket);
     WSACleanup();
 }

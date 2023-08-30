@@ -20,4 +20,7 @@ class Client : public IClient {
         void sendMesageAndReceiveResponse(void);
         void shutdownTheClient(void);
 
+        int sendMessage(void);
+        void receiveMessage(void);
+
 };

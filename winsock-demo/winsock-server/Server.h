@@ -7,6 +7,7 @@ class Server : public IServer {
 
     private:
         SOCKET clientSocket = INVALID_SOCKET;
+        string messageFromClient;
         char recvBuf[DEFAULT_BUFLEN];
         int iResult;
         int recvBufLen = DEFAULT_BUFLEN;
@@ -22,5 +23,8 @@ class Server : public IServer {
         void acceptConnection(void);
         void receiveAndSendData(void);
         void shutdownTheServer(void);
+
+        void sendData(void);
+        int receiveData(void);
 
 };

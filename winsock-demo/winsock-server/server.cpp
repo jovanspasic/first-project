@@ -80,45 +80,49 @@ void Server::acceptConnection() {
     closesocket(listenSocket);
 }
 
-void Server::receiveAndSendData() {
-    do {
+int Server::receiveData() {
+    iResult = recv(clientSocket, recvBuf, recvBufLen, 0);
+    if(iResult > 0) {
+        cout << "Number of bytes received from the client: " << iResult << endl;
+        cout << "Message from the client: " << recvBuf << endl;
+        return 0;
+    }
 
-        iResult = recv(clientSocket, recvBuf, recvBufLen, 0);
-        if(iResult > 0) {
-            cout << "Number of bytes received from the client: " << iResult << endl;
-            cout << "Message from the client: " << recvBuf << endl;
-            if(send(clientSocket, response, strlen(response) + 1, 0) == SOCKET_ERROR) {
-                cout << "An error occured while trying to send the message" << endl;
-                closesocket(clientSocket);
-                WSACleanup();
-                exit(1);
-            }
-            cout << "Message sent successfully" << endl;
-        }
+    else if (iResult == 0) {
+        cout << "Closing connection" << endl;
+    }
 
-        else if (iResult == 0) {
-            cout << "Closing connection" << endl;
-        }
-
-        else {
-            cout << "Receiving failed with an error: " << WSAGetLastError() << endl;
-            closesocket(clientSocket);
-            WSACleanup();
-            exit(1);
-        }
-
-    } while(iResult > 0);
-}
-
-void Server::shutdownTheServer() {
-    if (shutdown(clientSocket, SD_SEND) == SOCKET_ERROR)
-    {
-        cout << "An error occured while trying to shut the socket down" << endl;
+    else {
+        cout << "Receiving failed with an error: " << WSAGetLastError() << endl;
         closesocket(clientSocket);
         WSACleanup();
         exit(1);
     }
+    return 1;
+}
 
+void Server::sendData() {
+
+    if(send(clientSocket, response, strlen(response) + 1, 0) == SOCKET_ERROR) {
+        cout << "An error occured while trying to send the message" << endl;
+        closesocket(clientSocket);
+        WSACleanup();
+        exit(1);
+    }
+    memset(recvBuf, 0, recvBufLen);
+    cout << "Message sent successfully" << endl;
+
+}
+
+void Server::receiveAndSendData() {
+
+    while(receiveData() == 0) {
+        sendData();
+    }
+
+}
+
+void Server::shutdownTheServer() {
     closesocket(clientSocket);
     WSACleanup();
     cout << "The server has been shutdown" << endl;
