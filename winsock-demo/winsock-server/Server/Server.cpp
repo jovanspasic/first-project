@@ -1,12 +1,33 @@
 #include "Server.h"
 
+void Server::startServer() {
+    loadWinsockLibrary();
+    createHintsForAddress();
+    retrieveAddressInfo();
+    defineListeningSocket();
+    bindSocketToTheNetwork();
+    listenForConnection();
+    acceptConnection();
+}
+
+void Server::handleMessages() {
+    while(receiveData() == 0) {
+        sendData();
+    }
+}
+
+void Server::closeServer() {
+    terminateSession(&clientSocket, NULL);
+    serverLogger.log("The server has been shut down", "info");
+}
+
 void Server::loadWinsockLibrary() {
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
     {
         cout << "An error occured while initiating use of Winsock library on the server" << endl;
         exit(1);
     }
-    cout << "The Winsock library was initiated successfully" << endl;
+    serverLogger.log("The Winsock library was initiated successfully", "info");
 }
 
 void Server::createHintsForAddress() {
@@ -21,12 +42,10 @@ void Server::retrieveAddressInfo() {
     if (getaddrinfo(NULL, PORT_NUMBER, &hints, &result) != 0)
     {
         cout << "An error occured while trying to retrieve address and port data" << endl;
-        freeaddrinfo(result);
-        WSACleanup();
+        terminateSession(NULL, result);
         exit(1);
     }
-    cout << "Retrieving of the data for address and port successful" << endl;
-
+    serverLogger.log("Retrieving of the data for address and port successful", "info");
 }
 
 void Server::defineListeningSocket() {
@@ -35,23 +54,20 @@ void Server::defineListeningSocket() {
     if (listenSocket == INVALID_SOCKET)
     {
         cout << "An error occured while trying to trying to create a listening socket" << endl;
-        freeaddrinfo(result);
-        WSACleanup();
+        terminateSession(NULL, result);
         exit(1);
     }
-    cout << "Listening socket created successfully" << endl;
+    serverLogger.log("Socket for listening created successfully", "info");
 }
 
 void Server::bindSocketToTheNetwork() {
     if (bind(listenSocket, result->ai_addr, (int)result->ai_addrlen) == SOCKET_ERROR)
     {
         cout << "An error occured while trying to bind the socket" << endl;
-        closesocket(listenSocket);
-        freeaddrinfo(result);
-        WSACleanup();
+        terminateSession(&listenSocket, result);
         exit(1);
     }
-    cout << "Binding of the socket was finished successfully" << endl;
+    serverLogger.log("Binding of the socket was finished successfully", "info");
     freeaddrinfo(result);
 }
 
@@ -59,11 +75,10 @@ void Server::listenForConnection() {
     if (listen(listenSocket, SOMAXCONN) == SOCKET_ERROR)
     {
         cout << "An error occure while trying to listen to the socket" << endl;
-        closesocket(listenSocket);
-        WSACleanup();
+        terminateSession(&listenSocket, NULL);
         exit(1);
     }
-    cout << "The server is now listening for client requsts" << endl;
+    serverLogger.log("The server is now listening for client requests", "info");
 }
 
 void Server::acceptConnection() {
@@ -72,58 +87,49 @@ void Server::acceptConnection() {
     if (clientSocket == INVALID_SOCKET)
     {
         cout << "An error occured while trying to accept client request" << endl;
-        closesocket(listenSocket);
-        WSACleanup();
+        terminateSession(&listenSocket, NULL);
         exit(1);
     }
-    cout << "The server is now accepting client requests" << endl;
+    serverLogger.log("The server is now accepting client requests", "info");
     closesocket(listenSocket);
 }
 
 int Server::receiveData() {
     iResult = recv(clientSocket, recvBuf, recvBufLen, 0);
     if(iResult > 0) {
-        cout << "Number of bytes received from the client: " << iResult << endl;
-        cout << "Message from the client: " << recvBuf << endl;
+        string msg = "Message from the client: ";
+        serverLogger.log(msg + recvBuf, "output");
         return 0;
     }
 
     else if (iResult == 0) {
-        cout << "Closing connection" << endl;
+        serverLogger.log("Closing the connection", "info");
     }
 
     else {
         cout << "Receiving failed with an error: " << WSAGetLastError() << endl;
-        closesocket(clientSocket);
-        WSACleanup();
+        terminateSession(&clientSocket, NULL);
         exit(1);
     }
     return 1;
 }
 
 void Server::sendData() {
-
     if(send(clientSocket, response, strlen(response) + 1, 0) == SOCKET_ERROR) {
         cout << "An error occured while trying to send the message" << endl;
-        closesocket(clientSocket);
-        WSACleanup();
+        terminateSession(&clientSocket, NULL);
         exit(1);
     }
     memset(recvBuf, 0, recvBufLen);
-    cout << "Message sent successfully" << endl;
-
+    serverLogger.log("Response sent to the client successfully", "info");
 }
 
-void Server::receiveAndSendData() {
-
-    while(receiveData() == 0) {
-        sendData();
+void Server::terminateSession(SOCKET *socket, addrinfo *info) {
+    if(socket != NULL) {
+        closesocket(*socket);
     }
-
-}
-
-void Server::shutdownTheServer() {
-    closesocket(clientSocket);
+    if(info != NULL) {
+        freeaddrinfo(info);
+    }
     WSACleanup();
-    cout << "The server has been shutdown" << endl;
 }

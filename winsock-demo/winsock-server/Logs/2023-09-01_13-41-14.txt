@@ -1,0 +1,10 @@
+[INFO] The Winsock library was initiated successfully
+[INFO] Retrieving of the data for address and port successful
+[INFO] Socket for listening created successfully
+[INFO] Binding of the socket was finished successfully
+[INFO] The server is now listening for client requests
+[INFO] The server is now accepting client requests
+[OUTPUT] Message from the client: hello from client
+[INFO] Response sent to the client successfully
+[INFO] Closing the connection
+[INFO] The server has been shut down

@@ -1,13 +1,10 @@
-#include "Client.h"
+#include ".\Client\Client.h"
 
 int main(void) {
     Client client;
-    client.loadWinsockLibrary();
-    client.createHintsForAddress();
-    client.retrieveAddressInfo();
-    client.connectToTheServer();
-    client.sendMesageAndReceiveResponse();
-    client.shutdownTheClient();
+    client.startClient();
+    client.handleRequestsAndResponses();
+    client.closeClient();
 
     return 0;
 }

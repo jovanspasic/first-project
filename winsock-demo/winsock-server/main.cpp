@@ -1,16 +1,10 @@
-#include "Server.h"
+#include ".\Server\Server.h"
 
 int main(void) {
     Server server;
-    server.loadWinsockLibrary();
-    server.createHintsForAddress();
-    server.retrieveAddressInfo();
-    server.defineListeningSocket();
-    server.bindSocketToTheNetwork();
-    server.listenForConnection();
-    server.acceptConnection();
-    server.receiveAndSendData();
-    server.shutdownTheServer();
+    server.startServer();
+    server.handleMessages();
+    server.closeServer();
 
     return 0;
 }

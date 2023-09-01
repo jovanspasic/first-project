@@ -1,12 +1,28 @@
 #include "Client.h"
 
+void Client::startClient() {
+    loadWinsockLibrary();
+    createHintsForAddress();
+    retrieveAddressInfo();
+    connectToTheServer();
+}
+
+void Client::handleRequestsAndResponses() {
+    while(sendMessage() == 0) {
+        receiveMessage();
+    }
+}
+
+void Client::closeClient() {
+    terminateSession(&connectSocket, NULL);
+}
+
 void Client::loadWinsockLibrary() {
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
     {
         cout << "An error occured while initiating use of Winsock library on the client" << endl;
         exit(1);
     }
-    cout << "The Winsock library was initiated successfully" << endl;
 }
 
 void Client::createHintsForAddress() {
@@ -20,10 +36,9 @@ void Client::retrieveAddressInfo() {
     if (getaddrinfo("localhost", PORT_NUMBER, &hints, &result) != 0)
     {
         cout << "An error occured while trying to resolve servers address and port" << endl;
-        WSACleanup();
+        terminateSession(NULL, NULL);
         exit(1);
     }
-    cout << "Resolving server address and port successful" << endl;
 }
 
 void Client::connectToTheServer() {
@@ -31,7 +46,7 @@ void Client::connectToTheServer() {
         connectSocket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
         if(connectSocket == INVALID_SOCKET) {
             cout << "An error occured while trying to create a socket" << endl;
-            WSACleanup();
+            terminateSession(NULL, result);
             exit(1);
         }
 
@@ -48,24 +63,24 @@ void Client::connectToTheServer() {
 
     if(connectSocket == INVALID_SOCKET) {
         cout << "An error occured while trying to create a socket" << endl;
-        WSACleanup();
+        terminateSession(NULL, NULL);
         exit(1);
     }
 }
 
 int Client::sendMessage() {
     cout << "Input a message for the server" << endl;
-    cin >> userRequest;
+    getline(cin, userRequest);
 
     if(userRequest == "none") {
+        cout << "Closing connection" << endl;
         return 1;
     }
     
     const char *sptr = userRequest.c_str();
     if(send(connectSocket, sptr, strlen(sptr) + 1, 0) == SOCKET_ERROR) {
-        cout << "A message occured while trying to send a message to the server";
-        closesocket(connectSocket);
-        WSACleanup();
+        cout << "An error occured while trying to send a message to the server";
+        terminateSession(&connectSocket, NULL);
         exit(1);
     }
     cout << "Message sent successfully" << endl;
@@ -76,8 +91,7 @@ void Client::receiveMessage() {
     iResult = recv(connectSocket, recvBuf, recvBufLen, 0);
     if (iResult > 0)
     {
-        cout << "Data received from the server" << endl;
-        cout << "The message received from the server is " << recvBuf << endl;
+        cout << "The server responded with: " << recvBuf << endl;
     }
     else if (iResult == 0)
     {
@@ -86,22 +100,17 @@ void Client::receiveMessage() {
     else
     {
         cout << "Receiving failed with an error: " << WSAGetLastError() << endl;
-        closesocket(connectSocket);
-        WSACleanup();
+        terminateSession(&connectSocket, NULL);
         exit(1);
     }
 }
 
-void Client::sendMesageAndReceiveResponse() {
-    
-    while(sendMessage() == 0) {
-        receiveMessage();
+void Client::terminateSession(SOCKET *socket, addrinfo *info) {
+    if(socket != NULL) {
+        closesocket(*socket);
     }
-    
-}
-
-void Client::shutdownTheClient() {
-    cout << "The client is shutting down" << endl;
-    closesocket(connectSocket);
+    if(info != NULL) {
+        freeaddrinfo(info);
+    }
     WSACleanup();
 }
