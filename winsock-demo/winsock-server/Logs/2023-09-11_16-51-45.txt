@@ -1,0 +1,42 @@
+[INFO] The Winsock library was initiated successfully
+[INFO] Retrieving of the data for address and port successful
+[INFO] Socket for listening created successfully
+[INFO] Binding of the socket was finished successfully
+[INFO] The server is now listening for client requests
+
+[INFO] The server is now accepting client requests
+
+[OUTPUT] Message from the client: fsdf
+[INFO] Response sent to the client successfully
+
+[OUTPUT] Message from the client: wrewrew
+[INFO] Response sent to the client successfully
+
+[OUTPUT] Message from the client: werwe
+[INFO] Response sent to the client successfully
+
+[OUTPUT] Message from the client: ewrewrew
+[INFO] Response sent to the client successfully
+
+[OUTPUT] Message from the client: trt
+[INFO] Response sent to the client successfully
+[OUTPUT] Message from the client: rtrt
+[INFO] Response sent to the client successfully
+[OUTPUT] Message from the client: rt
+[INFO] Response sent to the client successfully
+
+[OUTPUT] Message from the client: yrey
+[INFO] Response sent to the client successfully
+
+[OUTPUT] Message from the client: yey
+[INFO] Response sent to the client successfully
+
+[OUTPUT] Message from the client: 3dhf
+[INFO] Response sent to the client successfully
+
+[OUTPUT] Message from the client: d
+[INFO] Response sent to the client successfully
+
+[INFO] Closing the connection
+[INFO] The server has been shut down
+

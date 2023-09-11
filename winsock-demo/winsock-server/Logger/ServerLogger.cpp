@@ -24,7 +24,8 @@ void ServerLogger::log(string message, string type) {
     }
     logLine += message;
     cout << logLine << endl;
-    storeLogMessage(logLine);
+    logMessages += logLine + "\n";
+    // storeLogMessage(logLine);
 }
 
 string ServerLogger::getCurrentDateTime() {
@@ -38,8 +39,20 @@ string ServerLogger::getCurrentDateTime() {
     return timeStr;
 }
 
-void ServerLogger::storeLogMessage(string logMessage) {
-    outStream.open(logName, ios::app);
-    outStream << logMessage << endl;
-    outStream.close();
+// void ServerLogger::storeLogMessage(string logMessage) {
+//     outStream.open(logName, ios::app);
+//     outStream << logMessage << endl;
+//     outStream.close();
+// }
+
+void ServerLogger::storeLogMessage() {
+    while(true) {
+        this_thread::sleep_for(2000ms);
+        if(logMessages != "") {
+            outStream.open(logName, ios::app);
+            outStream << logMessages;
+            outStream.close();
+            logMessages = "";
+        }
+    }
 }

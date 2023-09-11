@@ -8,10 +8,6 @@ class Server : public IServer {
 
     private:
         SOCKET clientSocket = INVALID_SOCKET;
-        char recvBuf[DEFAULT_BUFLEN];
-        int iResult;
-        int recvBufLen = DEFAULT_BUFLEN;
-        const char *response = "Server response: Message received";
         ServerLogger &serverLogger = ServerLogger::getInstance();
 
     public:
@@ -20,7 +16,6 @@ class Server : public IServer {
         void closeServer(void);
 
         void loadWinsockLibrary(void);
-        void createHintsForAddress(void);
         void retrieveAddressInfo(void);
         void defineListeningSocket(void);
         void bindSocketToTheNetwork(void);

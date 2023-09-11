@@ -9,8 +9,6 @@ class IClient {
     protected:
         WSADATA wsaData;
         struct addrinfo *result = NULL;
-        struct addrinfo *ptr = NULL;
-        struct addrinfo hints;
         SOCKET connectSocket = INVALID_SOCKET;
 
     public:

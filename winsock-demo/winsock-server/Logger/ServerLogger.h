@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
+#include <thread>
 
 using namespace std;
 
@@ -11,7 +12,9 @@ class ServerLogger {
         ServerLogger();
         ofstream outStream;
         string logName;
-        void storeLogMessage(string logMessage);
+        string logMessages = "";
+        // void storeLogMessage(string logMessage);
+        // void storeLogMessage();
         string getCurrentDateTime();
 
     public:
@@ -20,5 +23,6 @@ class ServerLogger {
 
         static ServerLogger& getInstance();
         void log(string message, string type);
+        void storeLogMessage();
         
 };

@@ -11,7 +11,6 @@ class IServer {
     protected:
         WSADATA wsaData;
         struct addrinfo *result = NULL;
-        struct addrinfo hints;
         SOCKET listenSocket = INVALID_SOCKET;
 
     public:
